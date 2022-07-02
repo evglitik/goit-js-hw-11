@@ -22,37 +22,42 @@ refs.form.addEventListener('submit', onSubmitForm);
 function onSubmitForm(e) {
   e.preventDefault();
 
+  imgFetch.offInfinitiScroll();
   hideInfoFinishPage();
   imgFetch.resetPage();
-  imgFetch.offInfinitiScroll();
   imgFetch.search = e.currentTarget.elements.searchQuery.value;
+  imgFetch.submit = true;
   resetGallery();
-  onHovManyGetImg();
+
   fetchObjForCreatGallery();
 }
 
-function onHovManyGetImg() {
-  imgFetch.onFetch().then(img => {
-    console.log(img);
-    if (img.hits.length === 0) {
-      Notiflix.Notify.failure(
-        `Sorry, there are no images matching your search query. Please try again.`
-      );
-    } else {
-      Notiflix.Notify.success(`Hooray! We found ${img.totalHits} images.`);
-    }
-  });
+function onHovManyGetImg(img) {
+  if (img.hits.length === 0) {
+    Notiflix.Notify.failure(
+      `Sorry, there are no images matching your search query. Please try again.`
+    );
+  } else {
+    Notiflix.Notify.success(`Hooray! We found ${img.totalHits} images.`);
+  }
 }
 
-function fetchObjForCreatGallery() {
-  imgFetch.onFetch().then(img => {
-    onCreateGallery(img);
-  });
+async function fetchObjForCreatGallery() {
+  const images = await imgFetch.onFetch();
+
+  onCreateGallery(images);
+
+  if (imgFetch.submit) {
+    onHovManyGetImg(images);
+  }
+
+  if (images.hits.length === 0 && !imgFetch.submit) {
+    showInfoFinishPage();
+  }
 }
 
 function onCreateGallery(dataImg) {
   const images = creatCardImages(dataImg.hits);
-
   refs.galleryList.insertAdjacentHTML('beforeend', images);
   lightbox.refresh();
 }
@@ -71,11 +76,7 @@ const lightbox = new simpleLightbox('.gallery img', {
 const onEntry = entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting && imgFetch.onInfinitiScroll) {
-      imgFetch.onFetch().then(img => {
-        if (img.hits.length === 0) {
-          showInfoFinishPage();
-        }
-      });
+      imgFetch.submit = false;
       fetchObjForCreatGallery();
     }
   });

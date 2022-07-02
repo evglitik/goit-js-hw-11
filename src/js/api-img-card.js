@@ -1,17 +1,28 @@
-/* <div class="photo-card">
-  <img src="" alt="" loading="lazy" />
+import icons from './icon-bootstrap';
+
+function creatCardImages(arrayImg) {
+  const images = arrayImg
+    .map(img => {
+      return `<li><div class="img-container"><img src="${img.webformatURL}" data-href="${img.largeImageURL}" alt="${img.tags}" loading="lazy" /></div>
   <div class="info">
     <p class="info-item">
-      <b>Likes</b>
+      <span>${icons.likes}</span><span>${img.likes}</span>
     </p>
     <p class="info-item">
-      <b>Views</b>
+      <span>${icons.views}</span><span>${img.views}</span>
     </p>
     <p class="info-item">
-      <b>Comments</b>
+      <span>${icons.comments}</span><span>${img.comments}</span>
     </p>
     <p class="info-item">
-      <b>Downloads</b>
+      <span>${icons.downloads}</span><span>${img.downloads}</span>
     </p>
   </div>
-</div>; */
+</div></li>`;
+    })
+    .join('');
+
+  return images;
+}
+
+export default creatCardImages;

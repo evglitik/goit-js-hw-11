@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Notiflix from 'notiflix';
 
 axios.defaults.baseURL = 'https://pixabay.com';
 
@@ -12,14 +11,17 @@ export default class OnApiFetch {
     this.onInfinitiScroll = false;
   }
   async onFetch() {
-    const images = await axios
-      .get(
+    try {
+      const images = await axios.get(
         `/api/?${this.API_KAY}&q=${this.userSearch}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.numPages}&per_page=40`
-      )
-      .catch(e => console.log('ERROR'));
-    this.numPages += 1;
-    this.onInfinitiScroll = true;
-    return images.data;
+      );
+      this.numPages += 1;
+      this.onInfinitiScroll = true;
+      return images.data;
+    } catch (e) {
+      console.log(e.message);
+      return 'error';
+    }
   }
   get search() {
     return this.search;

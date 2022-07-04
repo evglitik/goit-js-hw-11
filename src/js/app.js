@@ -1,6 +1,3 @@
-// import icons from './icon-bootstrap';
-// import SimpleLightbox from 'simplelightbox';
-
 import Notiflix from 'notiflix';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import PicturesApiService from './api-fetch';
@@ -45,15 +42,16 @@ function onHovManyGetImg(img) {
 async function fetchObjForCreatGallery() {
   const images = await imgFetch.onFetch();
 
-  onCreateGallery(images);
-
-  if (imgFetch.submit) {
+  if (images === 'error' && !imgFetch.submit) {
+    showInfoFinishPage();
+    return;
+  } else if (images.hits.length === 0 && !imgFetch.submit) {
+    showInfoFinishPage();
+  } else if (imgFetch.submit) {
     onHovManyGetImg(images);
   }
 
-  if (images.hits.length === 0 && !imgFetch.submit) {
-    showInfoFinishPage();
-  }
+  onCreateGallery(images);
 }
 
 function onCreateGallery(dataImg) {
